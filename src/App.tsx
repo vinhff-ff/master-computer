@@ -114,7 +114,7 @@ export default function App() {
 
   return (
     <div>
-      <h1 style={{ display: "flex", justifyContent: "center", color: "white" }}>SmartCalculator</h1>
+      <h1 style={{ display: "flex", justifyContent: "center", color: "#f7c948" }}>SmartCalculator</h1>
 
       <div className="calculator">
         <div className="mode-switch">
@@ -122,7 +122,7 @@ export default function App() {
             className={mode === "NORMAL" ? "active" : ""}
             onClick={() => setMode("NORMAL")}
           >
-            Bình thường
+            Thường
           </button>
           <button
             className={mode === "AI" ? "active" : ""}
@@ -174,9 +174,13 @@ export default function App() {
                   alignItems: "center",
                   cursor: "pointer",
                   fontSize: "20px",
+                  boxShadow: "0px 2px #333, 0 8px 15px rgba(0, 0, 0, 0.3)",
+                  border: "none",
+                  transition: "0.2s",
                 }}
+
               >
-                <p style={{marginTop:'15px'}}>+</p>
+                <p style={{ marginTop: '15px' }}>+</p>
               </label>
               <input
                 id="fileInput"
@@ -204,8 +208,6 @@ export default function App() {
                 width: "35px",
                 borderRadius: "5px",
                 objectFit: "cover",
-                border: "2px solid #28a745",
-                boxShadow: "0 0 5px rgba(40,167,69,0.6)",
               }}
             />
           ) : (
