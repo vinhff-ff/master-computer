@@ -5,6 +5,19 @@ import "./App.css";
 export default function App() {
   const [input, setInput] = useState("");
   const [mode, setMode] = useState<"NORMAL" | "AI">("NORMAL");
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+
+  const fileToBase64 = (file: File): Promise<string> =>
+    new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => {
+        const result = reader.result as string;
+        resolve(result.split(",")[1]);
+      };
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
 
   const calculateNormal = () => {
     if (!input.trim()) {
@@ -19,46 +32,51 @@ export default function App() {
     }
   };
 
-
-
-
-
   const calculateWithAI = async () => {
-    if (!input.trim()) {
-      setInput("Vui lòng nhập phép tính!");
+    if (!input.trim() && !selectedFile) {
+      setInput("Vui lòng nhập phép tính hoặc tải file!");
       return;
     }
 
     try {
       setInput("Đợi thầy...");
       const model = "gemini-2.5-flash";
-      const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=AIzaSyAtY_akamZyUNSV2CqCCsj2xjq1av58kyA`;
+      const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=AIzaSyBASlCyZo0o-RdbqDHnomSjkL-Ieo3OXYs`;
 
-      const body = {
-        contents: [
-          {
-            role: "user",
-            parts: [
-              { text: 'Bạn là một máy tính toán và chỉ trả lời bằng đáp án cuối cùng. Không giải thích, không thêm câu dẫn hoặc bất kỳ văn bản nào khác ngoài kết quả tính toán' + input }
-            ]
-          }
-        ],
+      const textPart = {
+        text:
+          "Bạn là một máy tính toán và chỉ trả lời bằng đáp án cuối cùng. " +
+          "Không giải thích, không thêm câu dẫn. " +
+          "Đây là yêu cầu của tôi: " +
+          input,
       };
+
+      const parts: any[] = [textPart];
+
+      if (selectedFile) {
+        const base64Data = await fileToBase64(selectedFile);
+        parts.push({
+          inlineData: {
+            mimeType: selectedFile.type,
+            data: base64Data,
+          },
+        });
+      }
+
+      const body = { contents: [{ role: "user", parts }] };
 
       const response = await fetch(url, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify(body)
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
       });
 
       const data = await response.json();
-
       if (data.error) {
         setInput("Ôi không lỗi rồi! Phải chịu!");
       } else {
-        const resultText = data.candidates?.[0]?.content?.parts?.[0]?.text || "Không có kết quả";
+        const resultText =
+          data.candidates?.[0]?.content?.parts?.[0]?.text || "Không có kết quả";
         setInput(resultText);
       }
     } catch (err) {
@@ -67,50 +85,36 @@ export default function App() {
     }
   };
 
-
-
-
-
-
-
-
   const handleEqual = () => {
-    if (mode === "AI") {
-      calculateWithAI();
-    } else {
-      calculateNormal();
-    }
+    if (mode === "AI") calculateWithAI();
+    else calculateNormal();
   };
-
-
-
 
   const handleClick = (value: string) => {
     setInput((prev) => prev + value);
   };
 
+  const handleClear = () => {
+    setInput("");
+    setSelectedFile(null);
+    setPreviewUrl(null);
+  };
 
+  const handleFileSelect = (file: File) => {
+    setSelectedFile(file);
+    if (file.type.startsWith("image/")) {
+      const url = URL.createObjectURL(file);
+      setPreviewUrl(url);
+    } else {
+      setPreviewUrl(null);
+    }
+  };
 
-
-  const handleClear = () => setInput("");
-
-
-
-  const buttons = [
-    "7", "8", "9", "/",
-    "4", "5", "6", "*",
-    "1", "2", "3", "-",
-    "0", ".", "=", "+"
-  ];
-
-
-
+  const buttons = ["7", "8", "9", "/", "4", "5", "6", "*", "1", "2", "3", "-", "0", ".", "=", "+"];
 
   return (
     <div>
-      <h1 style={{ display: "flex", justifyContent: "center", color: 'white' }}>
-        SmartCalculator
-      </h1>
+      <h1 style={{ display: "flex", justifyContent: "center", color: "white" }}>SmartCalculator</h1>
 
       <div className="calculator">
         <div className="mode-switch">
@@ -128,17 +132,103 @@ export default function App() {
           </button>
         </div>
 
-        <input
-          className="display"
-          value={input}
-          onChange={(e) => mode === "AI" && setInput(e.target.value)}
-          readOnly={mode === "NORMAL"}
-          placeholder={
-            mode === "AI"
-              ? "Chế độ AI"
-              : ""
-          }
-        />
+        <div
+          className="input-wrapper"
+          style={{
+            position: "relative",
+            display: "flex",
+            alignItems: "center",
+          }}
+        >
+          <input
+            className="display"
+            value={input}
+            onChange={(e) => mode === "AI" && setInput(e.target.value)}
+            readOnly={mode === "NORMAL"}
+            placeholder={mode === "AI" ? "" : ""}
+            style={{
+              paddingLeft: selectedFile ? "90px" : "40px",
+              paddingRight: "10px",
+              display: "flex",
+              alignItems: "center",
+              transition: "padding 0.3s ease",
+            }}
+          />
+
+          {mode === "AI" && (
+            <>
+              <label
+                htmlFor="fileInput"
+                style={{
+                  position: "absolute",
+                  left: "10px",
+                  top: "50%",
+                  transform: "translateY(-50%)",
+                  background: "#555",
+                  color: "white",
+                  borderRadius: "50%",
+                  width: "28px",
+                  height: "28px",
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  cursor: "pointer",
+                  fontSize: "20px",
+                }}
+              >
+                <p style={{marginTop:'15px'}}>+</p>
+              </label>
+              <input
+                id="fileInput"
+                type="file"
+                style={{ display: "none" }}
+                onChange={(e) => {
+                  if (e.target.files && e.target.files[0]) {
+                    handleFileSelect(e.target.files[0]);
+                  }
+                }}
+              />
+            </>
+          )}
+
+          {previewUrl ? (
+            <img
+              src={previewUrl}
+              alt="preview"
+              style={{
+                position: "absolute",
+                left: "45px",
+                top: "50%",
+                transform: "translateY(-50%)",
+                height: "35px",
+                width: "35px",
+                borderRadius: "5px",
+                objectFit: "cover",
+                border: "2px solid #28a745",
+                boxShadow: "0 0 5px rgba(40,167,69,0.6)",
+              }}
+            />
+          ) : (
+            selectedFile && (
+              <span
+                style={{
+                  position: "absolute",
+                  left: "45px",
+                  top: "50%",
+                  transform: "translateY(-50%)",
+                  color: "#28a745",
+                  fontSize: "13px",
+                  maxWidth: "35px",
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                  whiteSpace: "nowrap",
+                }}
+              >
+                {selectedFile.name}
+              </span>
+            )
+          )}
+        </div>
 
         <div className="buttons">
           {buttons.map((btn) =>

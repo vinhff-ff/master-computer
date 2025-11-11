@@ -9,9 +9,9 @@ body {
   margin: 0;
 }
 
-
+/* --- Calculator --- */
 .calculator {
-  width: 280px;
+  width: 300px;
   background: #111;
   border-radius: 12px;
   padding: 20px;
@@ -58,19 +58,78 @@ body {
   }
 }
 
-.display {
-  width: 260px;
-  height: 50px;
-  margin-bottom: 10px;
-  font-size: 1.4rem;
-  text-align: right;
-  padding: 5px 10px;
-  border: 1px solid #333;
-  border-radius: 6px;
-  background: #222;
-  color: #0ff;
-  box-shadow: inset 0 0 5px #0ff;
+/* --- Input wrapper --- */
+.input-wrapper {
+  position: relative;
+  width: 100%;
+  margin-bottom: 15px;
 }
+
+.display {
+  width: 100%;
+  height: 45px;
+  font-size: 16px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  outline: none;
+  padding: 0 45px 0 10px;
+  background-color: #fff;
+  box-sizing: border-box;
+}
+
+.display:focus {
+  border-color: #6544d1;
+}
+
+/* --- Dấu cộng bên trong ô input --- */
+.add-icon {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: #6544d1;
+  color: white;
+  border-radius: 50%;
+  width: 25px;
+  height: 25px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  font-size: 20px;
+  transition: 0.2s;
+}
+
+.add-icon:hover {
+  background: #7b5af4;
+}
+
+.preview-container {
+  position: absolute;
+  top: 5px;
+  right: 45px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.preview-image {
+  width: 35px;
+  height: 35px;
+  border-radius: 2px;
+  object-fit: cover;
+  border: 1px solid #aaa;
+}
+
+.preview-filename {
+  color: #333;
+  font-size: 12px;
+  max-width: 100px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 
 .buttons {
   display: grid;
@@ -88,8 +147,6 @@ button {
   cursor: pointer;
   transition: 0.2s;
   box-shadow: 0 0 5px #0ff;
-  position: relative;
-  margin-left: 2px;
 }
 
 button:hover {
@@ -103,7 +160,6 @@ button:hover {
   color: white;
   box-shadow: 0 0 5px #ff00ff, 0 0 15px #ff00ff;
 }
-
 
 .clear {
   margin-top: 10px;
