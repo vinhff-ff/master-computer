@@ -39,7 +39,7 @@ export default function App() {
     }
 
     try {
-      setInput("Đợi thầy...");
+      setInput("Đợi xíuuu...");
       const model = "gemini-2.5-flash";
       const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=AIzaSyBASlCyZo0o-RdbqDHnomSjkL-Ieo3OXYs`;
 
@@ -73,7 +73,7 @@ export default function App() {
 
       const data = await response.json();
       if (data.error) {
-        setInput("Ôi không lỗi rồi! Phải chịu!");
+        setInput("Chòi oyy lũi ròiiii!");
       } else {
         const resultText =
           data.candidates?.[0]?.content?.parts?.[0]?.text || "Không có kết quả";
@@ -81,7 +81,7 @@ export default function App() {
       }
     } catch (err) {
       console.error(err);
-      setInput("Ôi không lỗi rồi! Phải chịu!");
+      setInput("Chòi oyy lũi ròiiii!");
     }
   };
 
@@ -114,7 +114,12 @@ export default function App() {
 
   return (
     <div>
-      <h1 style={{ display: "flex", justifyContent: "center", color: "#f7c948" }}>SmartCalculator</h1>
+      <h1 style={{
+        display: "flex",
+        justifyContent: "center",
+        color: "#f7c948",
+        textShadow: "2px 2px 4px rgba(0, 0, 0, 0.6)",
+      }}>SmartCalculator</h1>
 
       <div className="calculator">
         <div className="mode-switch">
