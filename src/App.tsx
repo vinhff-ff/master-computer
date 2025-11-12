@@ -119,7 +119,7 @@ export default function App() {
         justifyContent: "center",
         color: "#f7c948",
         textShadow: "2px 2px 4px rgba(0, 0, 0, 0.6)",
-      }}>SmartCalculator</h1>
+      }}>SmartCompute</h1>
 
       <div className="calculator">
         <div className="mode-switch">
@@ -152,7 +152,7 @@ export default function App() {
             readOnly={mode === "NORMAL"}
             placeholder={mode === "AI" ? "" : ""}
             style={{
-              paddingLeft: selectedFile ? "90px" : "40px",
+              paddingLeft: selectedFile ? "90px" : "45px",
               paddingRight: "10px",
               display: "flex",
               alignItems: "center",
@@ -167,7 +167,7 @@ export default function App() {
                 style={{
                   position: "absolute",
                   left: "10px",
-                  top: "50%",
+                  top: "45%",
                   transform: "translateY(-50%)",
                   background: "#555",
                   color: "white",
